@@ -126,10 +126,15 @@ async def analyze_quantum_flow(data: MarketDataInput):
             np.array(data.volume_data)
         )
         
+        quantum_correlation = np.mean(np.abs(quantum_state))
+        # Handle NaN or None values
+        if quantum_correlation is None or np.isnan(quantum_correlation):
+            quantum_correlation = 0.0
+        
         quantum_metrics = {
             'coherence_time': qofa_analyzer.decoherence_time,
             'entanglement_threshold': qofa_analyzer.entanglement_threshold,
-            'quantum_correlation': float(np.mean(np.abs(quantum_state))),
+            'quantum_correlation': float(quantum_correlation),
             'signal_count': len(flow_signals)
         }
         
