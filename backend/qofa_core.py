@@ -94,9 +94,12 @@ class QuantumOptionsFlowAnalyzer:
         N = len(price_data)
         psi = np.zeros(N, dtype=complex)
         
-        # Normalize input data
-        normalized_price = (price_data - np.mean(price_data)) / np.std(price_data)
-        normalized_volume = (volume_data - np.mean(volume_data)) / np.std(volume_data)
+        # Normalize input data with epsilon to prevent division by zero
+        price_std = np.std(price_data)
+        volume_std = np.std(volume_data)
+        
+        normalized_price = (price_data - np.mean(price_data)) / (price_std + 1e-10)
+        normalized_volume = (volume_data - np.mean(volume_data)) / (volume_std + 1e-10)
         
         # Apply quantum field operator
         for n in range(min(N, self.n_basis_states)):
