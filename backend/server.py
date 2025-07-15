@@ -159,9 +159,18 @@ async def analyze_entanglement(request: QuantumAnalysisRequest):
         # Analyze entanglement
         entanglement_entropy = qofa_analyzer.entanglement_detection(market_data)
         
+        # Convert complex matrix to JSON-serializable format
+        entanglement_matrix_serializable = []
+        if qofa_analyzer.entanglement_matrix is not None:
+            matrix = qofa_analyzer.entanglement_matrix
+            entanglement_matrix_serializable = [
+                [{"real": float(cell.real), "imag": float(cell.imag)} for cell in row]
+                for row in matrix
+            ]
+        
         return {
             "entanglement_entropy": float(entanglement_entropy),
-            "entanglement_matrix": qofa_analyzer.entanglement_matrix.tolist() if qofa_analyzer.entanglement_matrix is not None else [],
+            "entanglement_matrix": entanglement_matrix_serializable,
             "symbols": request.symbols,
             "analysis_type": "entanglement",
             "timestamp": datetime.utcnow().isoformat()
